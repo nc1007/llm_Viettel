@@ -1,0 +1,30 @@
+services:
+  model:
+    image: cuongnd2003/vllm-qwen35-2b:v3
+    entrypoint:
+      - /entrypoint.sh
+    command:
+      - --model=/model
+      - --served-model-name=Qwen3.5-2B
+      - --host=0.0.0.0
+      - --port=8000
+      - --max-model-len=262144
+      - --gpu-memory-utilization=0.95
+      - --tensor-parallel-size=1
+      - --dtype=bfloat16
+      - --enable-prefix-caching
+      - --kv-cache-dtype=fp8
+      - --enable-chunked-prefill
+      - --max-num-seqs=64
+      - --max-num-batched-tokens=4096
+      - --no-enable-log-requests
+    ports:
+      - "8000:8000"
+    shm_size: "4g"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
